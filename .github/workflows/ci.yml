@@ -10,12 +10,24 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   VERSION: ${{ github.sha }}
+  MAVEN_OPTS: -Dmaven.repo.local=./.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
 
 jobs:
-  validate:
+  validate-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/by/web/tasker_app
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -27,40 +39,20 @@ jobs:
       - name: Grant execute permission for mvnw
         run: chmod +x mvnw
 
-      - name: Code validation
-        run: ./mvnw validate -Dcheckstyle.skip=true
-
-      - name: Check code style
-        run: ./mvnw checkstyle:check -Dcheckstyle.skip=true
-
-  test:
-    needs: validate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: "temurin"
-          cache: "maven"
-
-      - name: Grant execute permission for mvnw
-        run: chmod +x mvnw
-
-      - name: Run tests
-        run: ./mvnw test
+      - name: Validate and Test
+        run: |
+          ./mvnw $MAVEN_CLI_OPTS clean verify -Dcheckstyle.skip=true
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: target/surefire-reports
+          retention-days: 1
 
   build-and-push:
-    needs: [test]
+    needs: [validate-and-test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -70,6 +62,8 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -88,3 +82,6 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+          platforms: linux/amd64
