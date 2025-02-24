@@ -20,10 +20,12 @@ class TaskRepositoryTest {
         Task task = new Task();
         task.setTitle("Test Task");
         task.setDescription("Test Description");
+        task.setStatus("NEW");
         
         Task savedTask = taskRepository.save(task);
         
         assertThat(savedTask.getId()).isNotNull();
         assertThat(savedTask.getTitle()).isEqualTo("Test Task");
+        assertThat(savedTask.getStatus()).isEqualTo("NEW");
     }
 } 
