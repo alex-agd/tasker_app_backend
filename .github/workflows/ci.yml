@@ -55,7 +55,7 @@ jobs:
       - name: Validate and Test
         run: |
           cd tasker_app_backend
-          ./mvnw $MAVEN_CLI_OPTS clean verify -Dcheckstyle.skip=true
+          ./mvnw $MAVEN_CLI_OPTS clean verify -Dspring.profiles.active=test -Dcheckstyle.skip=true
 
       - name: Upload test results
         if: always()
