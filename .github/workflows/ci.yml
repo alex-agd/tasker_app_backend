@@ -106,3 +106,28 @@ jobs:
           build-args: |
             BUILDKIT_INLINE_CACHE=1
           platforms: linux/amd64
+
+  update-infrastructure:
+    needs: [build-and-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout infrastructure repository
+        uses: actions/checkout@v4
+        with:
+          repository: alex-agd/tasker-infra
+          token: ${{ secrets.INFRA_PAT }}
+          path: tasker-infra
+
+      - name: Update image version
+        run: |
+          cd tasker-infra/helm
+          yq eval ".image.tag = \"${{ env.VERSION }}\"" -i values.yaml
+
+      - name: Commit and push changes
+        run: |
+          cd tasker-infra
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add helm/values.yaml
+          git commit -m "Update image version to ${{ env.VERSION }}"
+          git push
