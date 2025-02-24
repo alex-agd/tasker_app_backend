@@ -1,9 +1,10 @@
-# Используем многоэтапную сборку
-FROM eclipse-temurin:17-jdk-alpine as builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+
+RUN chmod +x mvnw && \
+    ./mvnw dependency:go-offline
 COPY src ./src/
 RUN ./mvnw clean package -DskipTests
 
