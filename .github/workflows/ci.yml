@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner | lower }}/tasker_app_backend
+  IMAGE_NAME: ${{ github.repository_owner }}/tasker_app_backend
   VERSION: ${{ github.sha }}
   MAVEN_OPTS: -Dmaven.repo.local=./.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true
   MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: Alex-AGD/tasker_app_backend
+          repository: alex-agd/tasker_app_backend
           path: tasker_app_backend
 
       - name: Cache Maven packages
@@ -74,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: Alex-AGD/tasker_app_backend
+          repository: alex-agd/tasker_app_backend
           path: tasker_app_backend
 
       - name: Set up Docker Buildx
