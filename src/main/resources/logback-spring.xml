@@ -27,7 +27,7 @@
 
     <!-- Performance logging appender -->
     <appender name="PerformanceRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGS}/performance.log</file>
+<!--        <file>${LOGS}/performance.log</file>-->
         <encoder>
             <pattern>%d{ISO8601} %-5level [%t] %C{1}: %msg%n%throwable</pattern>
         </encoder>
