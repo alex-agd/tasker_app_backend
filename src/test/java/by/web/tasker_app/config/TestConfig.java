@@ -22,13 +22,4 @@ public class TestConfig {
                 .setType(EmbeddedDatabaseType.H2)
                 .build();
     }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
-                .setSkipNullEnabled(true);
-        return mapper;
-    }
-} 
+}
