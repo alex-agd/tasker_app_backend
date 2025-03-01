@@ -1,23 +1,54 @@
 package by.web.tasker_app.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.flyway.FlywayProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.DependsOn;
 
 import javax.sql.DataSource;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.profiles.active", havingValue = "prod", matchIfMissing = true)
 public class DatabaseConfig {
 
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    @Primary
     @Bean
+    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/tasker_db");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgres");
-        return dataSource;
+        return DataSourceBuilder
+                .create()
+                .driverClassName("org.postgresql.Driver")
+                .url(url)
+                .username(username)
+                .password(password)
+                .build();
     }
-} 
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.flyway")
+    public FlywayProperties flywayProperties() {
+        return new FlywayProperties();
+    }
+
+    @Bean
+    @DependsOn("dataSource")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .baselineOnMigrate(true)
+                .load();
+    }
+}

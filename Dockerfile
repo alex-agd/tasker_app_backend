@@ -16,4 +16,5 @@ COPY --from=builder /app/target/*.jar app.jar
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 EXPOSE 8080
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+ENV SPRING_PROFILES_ACTIVE=prod
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom" , "-jar", "app.jar"]

@@ -1,3 +1,16 @@
 spring:
   application:
     name: tasker_app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tasker_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    url: jdbc:postgresql://localhost:5432/tasker_db
+    user: postgres
+    password: postgres
+    baseline-on-migrate: true
+    enabled: true
+  jpa:
+    show-sql: true
