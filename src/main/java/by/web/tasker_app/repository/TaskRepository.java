@@ -10,13 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    @Query("SELECT t FROM Task t WHERE " +
-           "(:status IS NULL OR t.status = :status) AND " +
-           "(:search IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<Task> findAllWithFilters(
-            @Param("status") String status,
-            @Param("search") String search,
-            Pageable pageable
-    );
+    @Query(value = "SELECT * FROM tasks t WHERE " +
+            "(:status IS NULL OR t.status = :status) AND " +
+            "(:search IS NULL OR LOWER(CAST(t.title AS TEXT)) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(CAST(t.description AS TEXT)) LIKE LOWER(CONCAT('%', :search, '%')))",
+            nativeQuery = true)
+    Page<Task> findAllWithFilters(@Param("status") String status, @Param("search") String search, Pageable pageable);
 } 

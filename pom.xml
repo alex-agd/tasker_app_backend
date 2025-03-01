@@ -118,11 +118,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- AspectJ -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>

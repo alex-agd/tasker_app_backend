@@ -64,7 +64,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tasker_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       postgres:
         condition: service_healthy

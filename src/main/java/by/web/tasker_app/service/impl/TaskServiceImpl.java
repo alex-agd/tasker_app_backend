@@ -1,6 +1,5 @@
 package by.web.tasker_app.service.impl;
 
-import by.web.tasker_app.aspect.LogExecutionTime;
 import by.web.tasker_app.dto.TaskDto;
 import by.web.tasker_app.dto.TaskFilter;
 import by.web.tasker_app.model.Task;
@@ -27,7 +26,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    @LogExecutionTime
+
     public Task getTaskById(Long id) {
         log.debug("Fetching task with id: {}", id);
         return taskRepository.findById(id)
@@ -39,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    @LogExecutionTime
+
     public Task createTask(TaskDto taskDto) {
         log.debug("Creating new task: {}", taskDto);
         Task task = modelMapper.map(taskDto, Task.class);
@@ -50,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    @LogExecutionTime
+
     public Task updateTask(Long id, TaskDto taskDto) {
         log.debug("Updating task with id: {}", id);
         Task existingTask = getTaskById(id);
@@ -62,7 +61,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    @LogExecutionTime
+
     public void deleteTask(Long id) {
         log.debug("Deleting task with id: {}", id);
         if (!taskRepository.existsById(id)) {
@@ -74,7 +73,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @LogExecutionTime
     public Page<Task> getTasks(TaskFilter filter) {
         log.debug("Getting tasks with filter: {}", filter);
         

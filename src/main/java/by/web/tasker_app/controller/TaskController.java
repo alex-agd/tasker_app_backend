@@ -1,6 +1,5 @@
 package by.web.tasker_app.controller;
 
-import by.web.tasker_app.aspect.LogExecutionTime;
 import by.web.tasker_app.dto.TaskDto;
 import by.web.tasker_app.dto.TaskFilter;
 import by.web.tasker_app.model.Task;
@@ -55,7 +54,6 @@ public class TaskController {
 
     @GetMapping
     @Operation(summary = "Get tasks", description = "Get tasks with filtering and pagination")
-    @LogExecutionTime
     public ResponseEntity<Page<Task>> getTasks(
             @RequestParam(required = false) @Pattern(regexp = "^(NEW|IN_PROGRESS|COMPLETED)$", message = "Invalid status") String status,
             @RequestParam(required = false) String search,
