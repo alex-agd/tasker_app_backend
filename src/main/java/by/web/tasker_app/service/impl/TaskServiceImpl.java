@@ -26,7 +26,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-
     public Task getTaskById(Long id) {
         log.debug("Fetching task with id: {}", id);
         return taskRepository.findById(id)
@@ -38,7 +37,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-
     public Task createTask(TaskDto taskDto) {
         log.debug("Creating new task: {}", taskDto);
         Task task = modelMapper.map(taskDto, Task.class);
@@ -49,7 +47,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-
     public Task updateTask(Long id, TaskDto taskDto) {
         log.debug("Updating task with id: {}", id);
         Task existingTask = getTaskById(id);
@@ -61,7 +58,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-
     public void deleteTask(Long id) {
         log.debug("Deleting task with id: {}", id);
         if (!taskRepository.existsById(id)) {
