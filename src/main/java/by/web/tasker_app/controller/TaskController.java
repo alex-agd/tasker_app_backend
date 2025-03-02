@@ -34,7 +34,7 @@ public class TaskController {
     }
 
     @PostMapping
-    @Operation(summary = "Create new task test1", description = "Creates a new task")
+    @Operation(summary = "Create new task test", description = "Creates a new task")
     public ResponseEntity<Task> createTask(@Valid @RequestBody TaskDto taskDto) {
         return new ResponseEntity<>(taskService.createTask(taskDto), HttpStatus.CREATED);
     }
