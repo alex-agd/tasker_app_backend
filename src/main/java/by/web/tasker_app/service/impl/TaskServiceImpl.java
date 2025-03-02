@@ -5,6 +5,7 @@ import by.web.tasker_app.dto.TaskFilter;
 import by.web.tasker_app.model.Task;
 import by.web.tasker_app.repository.TaskRepository;
 import by.web.tasker_app.service.TaskService;
+import io.micrometer.core.instrument.Counter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final ModelMapper modelMapper;
-
+    private final Counter tasksCreatedCounter;
+    private final Counter tasksCompletedCounter;
 
     @Override
     @Transactional(readOnly = true)
@@ -42,6 +44,9 @@ public class TaskServiceImpl implements TaskService {
         Task task = modelMapper.map(taskDto, Task.class);
         Task savedTask = taskRepository.save(task);
         log.info("Created new task with id: {}", savedTask.getId());
+        
+        tasksCreatedCounter.increment();
+        
         return savedTask;
     }
 
@@ -50,9 +55,18 @@ public class TaskServiceImpl implements TaskService {
     public Task updateTask(Long id, TaskDto taskDto) {
         log.debug("Updating task with id: {}", id);
         Task existingTask = getTaskById(id);
+        
+        boolean wasCompleted = "COMPLETED".equals(existingTask.getStatus());
+        boolean isNowCompleted = "COMPLETED".equals(taskDto.getStatus());
+        
         modelMapper.map(taskDto, existingTask);
         Task updatedTask = taskRepository.save(existingTask);
         log.info("Updated task with id: {}", id);
+        
+        if (!wasCompleted && isNowCompleted) {
+            tasksCompletedCounter.increment();
+        }
+        
         return updatedTask;
     }
 
