@@ -6,6 +6,7 @@ import by.web.tasker_app.model.Task;
 import by.web.tasker_app.repository.TaskRepository;
 import by.web.tasker_app.service.impl.TaskServiceImpl;
 import by.web.tasker_app.util.TestDataFactory;
+import io.micrometer.core.instrument.Counter;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,12 +37,18 @@ class TaskServiceTest {
     
     @Mock
     private ModelMapper modelMapper;
+    
+    @Mock
+    private Counter tasksCreatedCounter;
+    
+    @Mock
+    private Counter tasksCompletedCounter;
 
     private TaskService taskService;
 
     @BeforeEach
     void setUp() {
-        taskService = new TaskServiceImpl(taskRepository, modelMapper);
+        taskService = new TaskServiceImpl(taskRepository, modelMapper, tasksCreatedCounter, tasksCompletedCounter);
     }
 
     @Nested
@@ -64,6 +71,7 @@ class TaskServiceTest {
             assertNotNull(createdTask);
             assertEquals(task.getTitle(), createdTask.getTitle());
             verify(taskRepository).save(any(Task.class));
+            verify(tasksCreatedCounter).increment();
         }
     }
 
@@ -76,7 +84,9 @@ class TaskServiceTest {
         void updateTask_WhenExists_Success() {
             // Arrange
             TaskDto taskDto = TestDataFactory.createTaskDto();
+            taskDto.setStatus("IN_PROGRESS");
             Task existingTask = TestDataFactory.createTask();
+            existingTask.setStatus("NEW");
             
             when(taskRepository.findById(1L)).thenReturn(Optional.of(existingTask));
             when(taskRepository.save(any(Task.class))).thenReturn(existingTask);
@@ -89,6 +99,30 @@ class TaskServiceTest {
             verify(taskRepository).findById(1L);
             verify(taskRepository).save(any(Task.class));
             verify(modelMapper).map(taskDto, existingTask);
+            verify(tasksCompletedCounter, never()).increment();
+        }
+        
+        @Test
+        @DisplayName("Should increment completion counter when task is completed")
+        void updateTask_WhenTaskCompleted_IncrementsCounter() {
+            // Arrange
+            TaskDto taskDto = TestDataFactory.createTaskDto();
+            taskDto.setStatus("COMPLETED");
+            Task existingTask = TestDataFactory.createTask();
+            existingTask.setStatus("IN_PROGRESS");
+            
+            when(taskRepository.findById(1L)).thenReturn(Optional.of(existingTask));
+            when(taskRepository.save(any(Task.class))).thenReturn(existingTask);
+
+            // Act
+            Task updatedTask = taskService.updateTask(1L, taskDto);
+
+            // Assert
+            assertNotNull(updatedTask);
+            verify(taskRepository).findById(1L);
+            verify(taskRepository).save(any(Task.class));
+            verify(modelMapper).map(taskDto, existingTask);
+            verify(tasksCompletedCounter).increment();
         }
 
         @Test
