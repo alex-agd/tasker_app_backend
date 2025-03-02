@@ -30,4 +30,11 @@ public class MetricsConfig {
                 .register(meterRegistry);
     }
 
+    @Bean
+    public Counter tasksCompletedTimeCounter() {
+        return Counter.builder("tasker_task_completion_time_seconds")
+                .description("Time taken to complete tasks in seconds")
+                .register(meterRegistry);
+    }
+
 } 

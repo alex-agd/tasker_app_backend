@@ -68,6 +68,8 @@ services:
       - SPRING_FLYWAY_URL=jdbc:postgresql://postgres:5432/tasker_db
       - SPRING_FLYWAY_USER=postgres
       - SPRING_FLYWAY_PASSWORD=postgres
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     depends_on:
       postgres:
         condition: service_healthy
