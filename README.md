@@ -1,5 +1,16 @@
 # Task Management Application
 
+## Project Information
+
+- **Project's reporter:** First Name, Surname
+- **Group number:** m-sa2-30-24
+
+### Application Details
+
+- **Name:** Task Management Application
+- **Programming Language:** Java 17
+- **Database:** PostgreSQL 15
+
 ## Project Overview
 
 Task Management Application is a RESTful service that allows users to manage their tasks. Built with Spring Boot, it
@@ -75,7 +86,6 @@ mvn test
 
 ## Deployment
 
-
 ## Monitoring
 
 The application exposes metrics through Spring Boot Actuator and Prometheus.
@@ -92,7 +102,3 @@ Grafana dashboards are available for:
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## License
-
-[License Information]
