@@ -28,7 +28,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get task by ID", description = "Retrieves a specific task by its ID")
+    @Operation(summary = "Get task by IDs", description = "Retrieves a specific task by its ID")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.getTaskById(id));
     }
